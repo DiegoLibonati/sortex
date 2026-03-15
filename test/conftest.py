@@ -1,47 +1,78 @@
-import os
-import shutil
-from test.constants import FOLDER_TEST_PATH
-from tkinter import Tk
+from tkinter import BooleanVar, IntVar, StringVar
+from unittest.mock import MagicMock
 
-from pytest import fixture
+import pytest
 
-from src.models.file_organizer import FileOrganizer
-from src.ui.interface_app import InterfaceApp
+from src.ui.styles import Styles
 
 
-@fixture(scope="session")
-def interface_app() -> InterfaceApp:
-    root = Tk()
-    return InterfaceApp(root=root)
+@pytest.fixture
+def mock_root() -> MagicMock:
+    root: MagicMock = MagicMock()
+    root.title = MagicMock()
+    root.geometry = MagicMock()
+    root.resizable = MagicMock()
+    root.config = MagicMock()
+    root.columnconfigure = MagicMock()
+    root.rowconfigure = MagicMock()
+    return root
 
 
-@fixture(scope="session")
-def file_organizer(folder_test_path: str) -> FileOrganizer:
-    file_organizer = FileOrganizer(path=folder_test_path)
-    return file_organizer
+@pytest.fixture
+def mock_styles() -> MagicMock:
+    styles: MagicMock = MagicMock()
+    styles.PRIMARY_COLOR = "#250001"
+    styles.WHITE_COLOR = "#FFFFFF"
+    styles.BLACK_COLOR = "#000000"
+    styles.WHITE_SMOKE_COLOR = "#F3F3F3"
+    styles.FONT_ARIAL_BOLD_10 = "Arial 10 bold"
+    styles.RELIEF_FLAT = "flat"
+    styles.STATE_NORMAL = "normal"
+    styles.STATE_DISABLED = "disabled"
+    styles.CURSOR_HAND2 = "HAND2"
+    styles.ANCHOR_W = "w"
+    styles.ANCHOR_CENTER = "center"
+    return styles
 
 
-@fixture(scope="session")
-def folder_test_path() -> str:
-    return FOLDER_TEST_PATH
+@pytest.fixture
+def real_styles() -> Styles:
+    return Styles()
 
 
-def pytest_sessionstart():
-    """Se ejecuta antes de que comiencen los tests."""
-
-    if not os.path.exists(FOLDER_TEST_PATH):
-        os.mkdir(FOLDER_TEST_PATH)
-
-    # Create files extensions
-
-    file_txt = open(f"{FOLDER_TEST_PATH}/test.txt", "w")
-    file_txt.close()
-
-    file_exe = open(f"{FOLDER_TEST_PATH}/test.py", "w")
-    file_exe.close()
+@pytest.fixture
+def mock_on_search() -> MagicMock:
+    return MagicMock()
 
 
-def pytest_sessionfinish():
-    """Se ejecuta después de que todos los tests hayan terminado."""
+@pytest.fixture
+def mock_on_organize() -> MagicMock:
+    return MagicMock()
 
-    shutil.rmtree(path=FOLDER_TEST_PATH)
+
+@pytest.fixture
+def mock_on_revert() -> MagicMock:
+    return MagicMock()
+
+
+@pytest.fixture
+def variable() -> MagicMock:
+    return MagicMock(spec=StringVar)
+
+
+@pytest.fixture
+def bool_variable() -> MagicMock:
+    return MagicMock(spec=BooleanVar)
+
+
+@pytest.fixture
+def int_variable() -> MagicMock:
+    return MagicMock(spec=IntVar)
+
+
+@pytest.fixture
+def mock_file_organizer() -> MagicMock:
+    organizer: MagicMock = MagicMock()
+    organizer.extensions_allowed = []
+    organizer.filters = {}
+    return organizer

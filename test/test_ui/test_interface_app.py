@@ -1,151 +1,260 @@
-import logging
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+from src.constants.messages import MESSAGE_NOT_FOUND_EXTENSIONS
 from src.ui.interface_app import InterfaceApp
-from src.utils.styles import BACKGROUND_COLOR
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+from src.ui.styles import Styles
+from src.utils.dialogs import NotFoundDialogError, ValidationDialogError
 
 
-def test_initial_config_tk_app(interface_app: InterfaceApp) -> None:
-    root = interface_app._root
-    root.update()
-
-    title = root.title()
-    geometry = root.geometry().split("+")[0]
-    resizable = root.resizable()
-    config_bg = root.cget("bg")
-
-    assert title == "File Organizer V1.0.0"
-    assert geometry == "400x600"
-    assert resizable == (False, False)
-    assert config_bg == BACKGROUND_COLOR
-
-
-def test_create_widgets(interface_app: InterfaceApp) -> None:
-    interface_app._create_widgets()
-
-    assert interface_app._text_path.get() == "Wait for directory..."
-    assert interface_app._check_value_all.get() is True
-    assert interface_app._filter_min_size.get() == 1
-    assert interface_app._filter_max_size.get() == 10
-    assert interface_app._extensions_options
-    assert interface_app._filters
-    assert interface_app._entry_path
-    assert interface_app._button_search
-    assert interface_app._button_organize
-    assert interface_app._button_revert
-    assert interface_app._label_frame_extensions
-    assert interface_app._check_button_all
-    assert interface_app._label_frame_filters
-    assert interface_app._check_button_filter_by
-    assert interface_app._label_min_size
-    assert interface_app._entry_min_size
-    assert interface_app._label_max_size
-    assert interface_app._entry_max_size
+@pytest.fixture
+def interface_app(mock_root: MagicMock, mock_styles: MagicMock) -> InterfaceApp:
+    with (
+        patch("src.ui.interface_app.MainView") as mock_main_view_class,
+        patch("src.ui.interface_app.FileService"),
+    ):
+        mock_main_view_class.return_value = MagicMock()
+        instance: InterfaceApp = InterfaceApp.__new__(InterfaceApp)
+        instance._styles = mock_styles
+        instance._config = MagicMock()
+        instance._root = mock_root
+        instance._main_view = mock_main_view_class.return_value
+        instance._file_service = MagicMock()
+        return instance
 
 
-def test_organize_without_instance(interface_app: InterfaceApp) -> None:
-    with patch("tkinter.messagebox.showerror") as showerror:
-        interface_app._organize()
-        showerror.assert_called_once_with(
-            message="You must enter a path in order to organize the folder.",
-            title="File Organizer",
-        )
+class TestInterfaceAppInit:
+    def test_stores_styles(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            app: InterfaceApp = InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        assert app._styles is mock_styles
+
+    def test_stores_root(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            app: InterfaceApp = InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        assert app._root is mock_root
+
+    def test_title_is_set(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_root.title.assert_called_once_with("File Organizer V1.0.0")
+
+    def test_geometry_is_set(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_root.geometry.assert_called_once_with("400x600")
+
+    def test_is_not_resizable(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_root.resizable.assert_called_once_with(False, False)
+
+    def test_background_uses_white_smoke_color(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_root.config.assert_called_once_with(background=mock_styles.WHITE_SMOKE_COLOR)
+
+    def test_default_styles_is_styles_instance(self, mock_root: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            app: InterfaceApp = InterfaceApp(root=mock_root, config=MagicMock())
+        assert isinstance(app._styles, Styles)
+
+    def test_file_service_is_instantiated(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService") as mock_fs_class,
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_fs_class.assert_called_once()
+
+    def test_main_view_receives_callbacks(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        _, kwargs = mock_main_view_class.call_args
+        assert callable(kwargs.get("on_search"))
+        assert callable(kwargs.get("on_organize"))
+        assert callable(kwargs.get("on_revert"))
+
+    def test_main_view_grid_called(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view: MagicMock = MagicMock()
+            mock_main_view_class.return_value = mock_main_view
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_main_view.grid.assert_called_once_with(row=0, column=0, sticky="nsew")
+
+    def test_columnconfigure_called_on_root(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_root.columnconfigure.assert_called_once_with(0, weight=1)
+
+    def test_rowconfigure_called_on_root(self, mock_root: MagicMock, mock_styles: MagicMock) -> None:
+        with (
+            patch("src.ui.interface_app.MainView") as mock_main_view_class,
+            patch("src.ui.interface_app.FileService"),
+        ):
+            mock_main_view_class.return_value.grid = MagicMock()
+            InterfaceApp(root=mock_root, config=MagicMock(), styles=mock_styles)
+        mock_root.rowconfigure.assert_called_once_with(0, weight=1)
 
 
-def test_reverse_organize_without_instance(interface_app: InterfaceApp) -> None:
-    with patch("tkinter.messagebox.showerror") as showerror:
-        interface_app._reverse_organize()
-        showerror.assert_called_once_with(
-            message="You must enter a path in order to reverse organize the folder.",
-            title="File Organizer",
-        )
-
-
-def test_set_path(interface_app: InterfaceApp, folder_test_path: str) -> None:
-    path = folder_test_path
-
-    with patch("tkinter.filedialog.askdirectory") as askdirectory:
-        askdirectory.return_value = path
-
-        with patch("tkinter.messagebox.showinfo") as showinfo:
+class TestInterfaceAppSetPath:
+    def test_raises_validation_error_when_set_path_fails(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.set_path.return_value = ("Invalid path.", False)
+        with (
+            patch("src.ui.interface_app.filedialog.askdirectory", return_value="/bad/path"),
+            pytest.raises(ValidationDialogError) as exc_info,
+        ):
             interface_app._set_path()
+        assert exc_info.value.message == "Invalid path."
 
-            assert interface_app._text_path.get() == path
-            askdirectory.assert_called_once_with(title="Choose a directory")
-            showinfo.assert_called_once_with(
-                message=f"Path loaded: {path} successfully.", title="File Organizer"
-            )
-
-
-def test_organize_without_extensions_allowed(interface_app: InterfaceApp) -> None:
-    for value in interface_app._extensions_options.values():
-        value.set(False)
-
-    with patch("tkinter.messagebox.showerror") as showerror:
-        interface_app._organize()
-        showerror.assert_called_once_with(
-            message="Select at least one extension to organize the path.",
-            title="File Organizer",
-        )
-
-
-def test_organize(interface_app: InterfaceApp) -> None:
-    interface_app._check_value_txt.set(True)
-    interface_app._file_service.set_path(".")
-
-    with patch("tkinter.messagebox.showinfo") as showinfo:
-        with patch(
-            "src.services.file_service.FileService.organize",
-            return_value=("Successfully organized.", True),
+    def test_main_view_set_path_called_on_success(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.set_path.return_value = ("ok", True)
+        with (
+            patch("src.ui.interface_app.filedialog.askdirectory", return_value="/valid/path"),
+            patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class,
         ):
+            mock_dialog_class.return_value = MagicMock()
+            interface_app._set_path()
+        interface_app._main_view.set_path.assert_called_once_with("/valid/path")
+
+    def test_success_dialog_opened_on_set_path(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.set_path.return_value = ("Path loaded.", True)
+        with (
+            patch("src.ui.interface_app.filedialog.askdirectory", return_value="/valid/path"),
+            patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class,
+        ):
+            mock_dialog: MagicMock = MagicMock()
+            mock_dialog_class.return_value = mock_dialog
+            interface_app._set_path()
+        mock_dialog.open.assert_called_once()
+
+    def test_file_service_set_path_called_with_directory(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.set_path.return_value = ("ok", True)
+        with (
+            patch("src.ui.interface_app.filedialog.askdirectory", return_value="/valid/path"),
+            patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class,
+        ):
+            mock_dialog_class.return_value = MagicMock()
+            interface_app._set_path()
+        interface_app._file_service.set_path.assert_called_once_with("/valid/path")
+
+    def test_main_view_set_path_not_called_when_fails(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.set_path.return_value = ("error", False)
+        with (
+            patch("src.ui.interface_app.filedialog.askdirectory", return_value="/bad/path"),
+            pytest.raises(ValidationDialogError),
+        ):
+            interface_app._set_path()
+        interface_app._main_view.set_path.assert_not_called()
+
+
+class TestInterfaceAppOrganize:
+    def test_raises_not_found_error_when_no_extensions(self, interface_app: InterfaceApp) -> None:
+        interface_app._main_view.get_selected_extensions.return_value = []
+        with pytest.raises(NotFoundDialogError) as exc_info:
             interface_app._organize()
-            showinfo.assert_called_once_with(
-                message="Successfully organized.", title="File Organizer"
-            )
+        assert exc_info.value.message == MESSAGE_NOT_FOUND_EXTENSIONS
+
+    def test_raises_validation_error_when_organize_fails(self, interface_app: InterfaceApp) -> None:
+        interface_app._main_view.get_selected_extensions.return_value = ["txt"]
+        interface_app._main_view.get_filters.return_value = {}
+        interface_app._file_service.organize.return_value = ("error msg", False)
+        with pytest.raises(ValidationDialogError) as exc_info:
+            interface_app._organize()
+        assert exc_info.value.message == "error msg"
+
+    def test_success_dialog_opened_on_organize(self, interface_app: InterfaceApp) -> None:
+        interface_app._main_view.get_selected_extensions.return_value = ["txt"]
+        interface_app._main_view.get_filters.return_value = {}
+        interface_app._file_service.organize.return_value = ("ok", True)
+        with patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class:
+            mock_dialog: MagicMock = MagicMock()
+            mock_dialog_class.return_value = mock_dialog
+            interface_app._organize()
+        mock_dialog.open.assert_called_once()
+
+    def test_organize_called_with_extensions_and_filters(self, interface_app: InterfaceApp) -> None:
+        interface_app._main_view.get_selected_extensions.return_value = ["txt", "pdf"]
+        interface_app._main_view.get_filters.return_value = {"min_size": 1, "max_size": 10}
+        interface_app._file_service.organize.return_value = ("ok", True)
+        with patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class:
+            mock_dialog_class.return_value = MagicMock()
+            interface_app._organize()
+        interface_app._file_service.organize.assert_called_once_with(["txt", "pdf"], {"min_size": 1, "max_size": 10})
+
+    def test_get_filters_not_called_when_no_extensions(self, interface_app: InterfaceApp) -> None:
+        interface_app._main_view.get_selected_extensions.return_value = []
+        with pytest.raises(NotFoundDialogError):
+            interface_app._organize()
+        interface_app._main_view.get_filters.assert_not_called()
 
 
-def test_reverse_organize(interface_app: InterfaceApp) -> None:
-    interface_app._file_service.set_path(".")
-
-    with patch("tkinter.messagebox.showinfo") as showinfo:
-        with patch(
-            "src.services.file_service.FileService.revert",
-            return_value=("Successfully reverted.", True),
-        ):
+class TestInterfaceAppReverseOrganize:
+    def test_raises_validation_error_when_revert_fails(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.revert.return_value = ("error msg", False)
+        with pytest.raises(ValidationDialogError) as exc_info:
             interface_app._reverse_organize()
-            showinfo.assert_called_once_with(
-                message="Successfully reverted.", title="File Organizer"
-            )
+        assert exc_info.value.message == "error msg"
 
+    def test_success_dialog_opened_on_revert(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.revert.return_value = ("reverted", True)
+        with patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class:
+            mock_dialog: MagicMock = MagicMock()
+            mock_dialog_class.return_value = mock_dialog
+            interface_app._reverse_organize()
+        mock_dialog.open.assert_called_once()
 
-def test_select_all_extensions(interface_app: InterfaceApp) -> None:
-    interface_app._check_value_all.set(True)
-    interface_app._select_all_extensions()
-    for option in interface_app._extensions_options.values():
-        assert option.get()
+    def test_revert_called_on_file_service(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.revert.return_value = ("reverted", True)
+        with patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class:
+            mock_dialog_class.return_value = MagicMock()
+            interface_app._reverse_organize()
+        interface_app._file_service.revert.assert_called_once()
 
-    interface_app._check_value_all.set(False)
-    interface_app._select_all_extensions()
-    for option in interface_app._extensions_options.values():
-        assert not option.get()
-
-
-def test_select_extension(interface_app: InterfaceApp) -> None:
-    interface_app._select_extension()
-    assert not interface_app._check_value_all.get()
-
-
-def test_handle_filters(interface_app: InterfaceApp) -> None:
-    interface_app._check_value_filters.set(True)
-    interface_app._handle_filters()
-    assert interface_app._entry_min_size["state"] == "normal"
-    assert interface_app._entry_max_size["state"] == "normal"
-
-    interface_app._check_value_filters.set(False)
-    interface_app._handle_filters()
-    assert interface_app._entry_min_size["state"] == "disabled"
-    assert interface_app._entry_max_size["state"] == "disabled"
+    def test_success_dialog_message_matches_revert_message(self, interface_app: InterfaceApp) -> None:
+        interface_app._file_service.revert.return_value = ("Successfully reverted.", True)
+        with patch("src.ui.interface_app.SuccessDialogInformation") as mock_dialog_class:
+            mock_dialog_class.return_value = MagicMock()
+            interface_app._reverse_organize()
+        mock_dialog_class.assert_called_once_with(message="Successfully reverted.")

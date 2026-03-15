@@ -3,8 +3,16 @@ import time
 from shutil import move, rmtree
 from typing import Any
 
+from src.constants.messages import (
+    MESSAGE_NOT_FOUND_FILES,
+    MESSAGE_NOT_FOUND_FOLDERS,
+    MESSAGE_NOT_FOUND_PATH_OR_EXTENSIONS,
+    MESSAGE_SUCCESS_ORGANIZED,
+    MESSAGE_SUCCESS_REVERTED,
+)
 
-class FileOrganizer:
+
+class FileOrganizerModel:
     def __init__(
         self,
         path: str,
@@ -16,14 +24,12 @@ class FileOrganizer:
         self.extensions_allowed: list[str] = extensions_allowed
 
         self.filters: dict[str, Any] = {}
-        self.all_path_extensions: list[str] = self._get_extensions(
-            files=self._get_files()
-        )
+        self.all_path_extensions: list[str] = self._get_extensions(files=self._get_files())
 
     def organizer(self) -> tuple[str, bool]:
         if not self.all_path_extensions or not self.path:
             return (
-                "It could not be organized because there is no path or there are no extensions.",
+                MESSAGE_NOT_FOUND_PATH_OR_EXTENSIONS,
                 False,
             )
 
@@ -31,17 +37,13 @@ class FileOrganizer:
 
         if not files:
             return (
-                "There are no files to organize. Adjust filters or change path.",
+                MESSAGE_NOT_FOUND_FILES,
                 False,
             )
 
         files_extensions = self._get_extensions(files=self._get_files())
 
-        extensions = (
-            self.extensions_allowed
-            if self.extensions_allowed
-            else self.all_path_extensions
-        )
+        extensions = self.extensions_allowed if self.extensions_allowed else self.all_path_extensions
 
         for extension in extensions:
             folder_name = f"{extension.upper()}_{self.folder_name}"
@@ -51,7 +53,6 @@ class FileOrganizer:
                 continue
 
             os.mkdir(dir_path)
-            print(f"Directory {folder_name} created.")
 
         for file in files:
             extension = file.rsplit(".", 1).pop().upper()
@@ -59,19 +60,14 @@ class FileOrganizer:
             new_path = f"{self.path}/{extension}_ORGANIZER/{file}"
 
             move(last_path, new_path)
-            print(f"{file} moved to {new_path}")
 
-        return "Successfully organized.", True
+        return MESSAGE_SUCCESS_ORGANIZED, True
 
     def revert_organizer(self) -> tuple[str, bool]:
-        folder_names = [
-            name
-            for name in os.listdir(self.path)
-            if os.path.isdir(f"{self.path}/{name}") and self.folder_name in name
-        ]
+        folder_names = [name for name in os.listdir(self.path) if os.path.isdir(f"{self.path}/{name}") and self.folder_name in name]
 
         if not folder_names:
-            return "There are no folders to revert.", False
+            return MESSAGE_NOT_FOUND_FOLDERS, False
 
         for folder_name in folder_names:
             dir_path = f"{self.path}/{folder_name}"
@@ -87,31 +83,20 @@ class FileOrganizer:
 
                 move(last_path, new_path)
 
-                print(f"{file} moved to {new_path}")
-
             rmtree(dir_path)
 
         self._reset_state()
-        return "Successfully reverted.", True
+        return MESSAGE_SUCCESS_REVERTED, True
 
     def _get_files(self) -> list[str]:
         try:
             files_in_path = os.listdir(self.path)
 
             if not self.filters and not self.extensions_allowed:
-                return [
-                    file
-                    for file in files_in_path
-                    if os.path.isfile(f"{self.path}/{file}")
-                ]
+                return [file for file in files_in_path if os.path.isfile(f"{self.path}/{file}")]
 
             if not self.filters and self.extensions_allowed:
-                return [
-                    file
-                    for file in files_in_path
-                    if os.path.isfile(f"{self.path}/{file}")
-                    and file.rsplit(".", 1).pop() in self.extensions_allowed
-                ]
+                return [file for file in files_in_path if os.path.isfile(f"{self.path}/{file}") and file.rsplit(".", 1).pop() in self.extensions_allowed]
 
             files = []
             byte = 1024 * 1024
@@ -128,18 +113,7 @@ class FileOrganizer:
                 file_size = os.stat(f"{self.path}/{file}").st_size
                 file_extension = file.rsplit(".", 1).pop()
 
-                print(
-                    f"File size: {file_size} - min size: {filter_min_size} - max size: {filter_max_size}"
-                )
-
-                if (
-                    (
-                        not self.extensions_allowed
-                        or file_extension in self.extensions_allowed
-                    )
-                    and file_size >= filter_min_size
-                    and file_size <= filter_max_size
-                ):
+                if (not self.extensions_allowed or file_extension in self.extensions_allowed) and file_size >= filter_min_size and file_size <= filter_max_size:
                     files.append(file)
 
             return files
@@ -181,14 +155,9 @@ class FileOrganizer:
 if __name__ == "__main__":
     path = "D:/a"
 
-    file_organizer = FileOrganizer(path=path)
-
-    print(file_organizer)
+    file_organizer = FileOrganizerModel(path=path)
 
     message, success = file_organizer.organizer()
-
-    print(message)
-    print(success)
 
     time.sleep(5)
 

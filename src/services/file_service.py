@@ -1,22 +1,24 @@
 import os
+from typing import Any
 
-from src.models.file_organizer import FileOrganizer
+from src.constants.messages import MESSAGE_NOT_FOUND_PATH, MESSAGE_NOT_VALID_PATH, MESSAGE_SUCCESS_PATH_LOADED
+from src.models.file_organizer_model import FileOrganizerModel
 
 
 class FileService:
     def __init__(self):
-        self._file_organizer: FileOrganizer | None = None
+        self._file_organizer: FileOrganizerModel | None = None
 
     def set_path(self, path: str) -> tuple[str, bool]:
         if not path or not os.path.exists(path):
-            return "Could not load path: invalid or non-existent.", False
+            return MESSAGE_NOT_VALID_PATH, False
 
-        self._file_organizer = FileOrganizer(path=path)
-        return f"Path loaded: {path} successfully.", True
+        self._file_organizer = FileOrganizerModel(path=path)
+        return MESSAGE_SUCCESS_PATH_LOADED, True
 
-    def organize(self, extensions: list[str], filters: dict) -> tuple[str, bool]:
+    def organize(self, extensions: list[str], filters: dict[str, Any]) -> tuple[str, bool]:
         if not self._file_organizer:
-            return "You must enter a path in order to organize the folder.", False
+            return MESSAGE_NOT_FOUND_PATH, False
 
         self._file_organizer.extensions_allowed = extensions
         self._file_organizer.filters = filters
@@ -26,7 +28,7 @@ class FileService:
     def revert(self) -> tuple[str, bool]:
         if not self._file_organizer:
             return (
-                "You must enter a path in order to reverse organize the folder.",
+                MESSAGE_NOT_FOUND_PATH,
                 False,
             )
         return self._file_organizer.revert_organizer()
