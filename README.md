@@ -1,4 +1,4 @@
-# File Organizer Program
+# Sortex
 
 ## Educational Purpose
 
@@ -24,7 +24,17 @@ The main goal is to explore and demonstrate best practices, patterns, and techno
 
 ## Description
 
-I made a program that allows to sort the files in a specific path. It will get all the file extensions and create a folder for each extension in that path. Then it will add to each folder the file that corresponds to it. Basically it sorts files depending on the extension. In addition we will be able to choose which extensions to sort or all of them. Filters can also be applied, being able to sort files with a specific size. Finally, if we want to go back we can also do it by clicking on the `Revert ORGANIZE` button, thus returning to the initial state of the path.
+**Sortex** is a desktop application built with Python and Tkinter that automatically organizes the files inside any directory by grouping them into extension-named subfolders. Instead of manually sorting a cluttered folder full of mixed file types, you point Sortex at a directory and it takes care of everything in one click.
+
+When you trigger the organize operation, Sortex scans the target directory, detects every file extension present, creates a dedicated subfolder for each one following the naming convention `<EXTENSION>_ORGANIZER` (e.g. `PDF_ORGANIZER`, `MP3_ORGANIZER`, `PNG_ORGANIZER`), and moves each file into its corresponding folder. The result is a clean, structured directory where every file type lives in its own place.
+
+You are not forced to organize everything at once. The extensions panel lets you select exactly which file types to include in the operation — check only the ones you care about and Sortex will ignore the rest. Supported extensions out of the box include `mp4`, `pdf`, `exe`, `png`, `jpg`, `jpeg`, `txt`, `json`, `mp3`, `m3u8`, `zip`, and `gif`.
+
+For more granular control, Sortex also offers a size filter. You can define a minimum and maximum file size in megabytes, and only files that fall within that range will be moved. This is useful when you want to organize large media files without touching lightweight config or text files, or vice versa.
+
+If the result is not what you expected, or you simply want to undo the operation, the **Revert Organize** button restores the original layout: every file is moved back to the root of the directory and all the `_ORGANIZER` folders are deleted, leaving the directory exactly as it was before.
+
+The application is intentionally simple and self-contained. There is no database, no cloud sync, and no background service — it runs locally, operates only on the directory you choose, and does nothing unless you explicitly trigger an action.
 
 ## Technologies used
 
@@ -64,11 +74,7 @@ pyinstaller==6.16.0
 
 ## Portfolio Link
 
-[`https://www.diegolibonati.com.ar/#/project/File-Organizer-Program`](https://www.diegolibonati.com.ar/#/project/File-Organizer-Program)
-
-## Video
-
-https://user-images.githubusercontent.com/99032604/205468137-440a09af-4de6-4179-9cf7-5462b2ae414c.mp4
+[`https://www.diegolibonati.com.ar/#/project/sortex`](https://www.diegolibonati.com.ar/#/project/sortex)
 
 ## Testing
 

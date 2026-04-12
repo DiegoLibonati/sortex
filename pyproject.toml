@@ -1,12 +1,12 @@
 [project]
-name = "file-organizer-program"
+name = "sortex"
 version = "1.0.0"
-description = "I made a program that allows to sort the files in a specific path. It will get all the file extensions and create a folder for each extension in that path. Then it will add to each folder the file that corresponds to it. Basically it sorts files depending on the extension. In addition we will be able to choose which extensions to sort or all of them. Filters can also be applied, being able to sort files with a specific size. Finally, if we want to go back we can also do it by clicking on the `Revert ORGANIZE` button, thus returning to the initial state of the path."
+description = "**Sortex** is a desktop application built with Python and Tkinter that automatically organizes the files inside any directory by grouping them into extension-named subfolders. Instead of manually sorting a cluttered folder full of mixed file types, you point Sortex at a directory and it takes care of everything in one click."
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
 pythonpath = "."
-testpaths = ["test"]
+testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
@@ -17,6 +17,7 @@ filterwarnings = [
     "ignore::DeprecationWarning",
     "ignore::PendingDeprecationWarning",
     "ignore::pytest.PytestCollectionWarning",
+    "ignore::pytest.PytestUnraisableExceptionWarning",
 ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",

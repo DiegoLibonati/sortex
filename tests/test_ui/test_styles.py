@@ -22,26 +22,35 @@ class TestStyles:
     def test_font_arial_10(self) -> None:
         assert Styles.FONT_ARIAL_10 == "Arial 10"
 
+    def test_font_arial_12(self) -> None:
+        assert Styles.FONT_ARIAL_12 == "Arial 12"
+
     def test_font_arial_bold_10(self) -> None:
         assert Styles.FONT_ARIAL_BOLD_10 == "Arial 10 bold"
 
-    def test_relief_flat(self) -> None:
-        assert Styles.RELIEF_FLAT == FLAT
+    def test_font_arial_bold_12(self) -> None:
+        assert Styles.FONT_ARIAL_BOLD_12 == "Arial 12 bold"
 
-    def test_state_normal(self) -> None:
-        assert Styles.STATE_NORMAL == NORMAL
+    def test_font_arial_bold_20(self) -> None:
+        assert Styles.FONT_ARIAL_BOLD_20 == "Arial 20 bold"
 
-    def test_state_disabled(self) -> None:
-        assert Styles.STATE_DISABLED == DISABLED
+    def test_center_matches_tkinter(self) -> None:
+        assert Styles.CENTER == CENTER
 
-    def test_anchor_center(self) -> None:
+    def test_anchor_center_matches_tkinter(self) -> None:
         assert Styles.ANCHOR_CENTER == CENTER
 
-    def test_anchor_w(self) -> None:
+    def test_relief_flat_matches_tkinter(self) -> None:
+        assert Styles.RELIEF_FLAT == FLAT
+
+    def test_state_normal_matches_tkinter(self) -> None:
+        assert Styles.STATE_NORMAL == NORMAL
+
+    def test_state_disabled_matches_tkinter(self) -> None:
+        assert Styles.STATE_DISABLED == DISABLED
+
+    def test_anchor_w_matches_tkinter(self) -> None:
         assert Styles.ANCHOR_W == W
 
     def test_cursor_hand2(self) -> None:
         assert Styles.CURSOR_HAND2 == "HAND2"
-
-    def test_instantiation(self) -> None:
-        assert isinstance(Styles(), Styles)

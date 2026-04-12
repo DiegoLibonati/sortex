@@ -13,7 +13,7 @@ class InterfaceApp:
         self._styles = styles
         self._config = config
         self._root = root
-        self._root.title("File Organizer V1.0.0")
+        self._root.title("Sortex V1.0.0")
         self._root.geometry("400x600")
         self._root.resizable(False, False)
         self._root.config(background=self._styles.WHITE_SMOKE_COLOR)
