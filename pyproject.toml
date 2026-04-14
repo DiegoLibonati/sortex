@@ -1,7 +1,7 @@
 [project]
 name = "sortex"
 version = "1.0.0"
-description = "**Sortex** is a desktop application built with Python and Tkinter that automatically organizes the files inside any directory by grouping them into extension-named subfolders. Instead of manually sorting a cluttered folder full of mixed file types, you point Sortex at a directory and it takes care of everything in one click."
+description = "Sortex is a desktop application built with Python and Tkinter that automatically organizes the files inside any directory by grouping them into extension-named subfolders. Instead of manually sorting a cluttered folder full of mixed file types, you point Sortex at a directory and it takes care of everything in one click."
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
