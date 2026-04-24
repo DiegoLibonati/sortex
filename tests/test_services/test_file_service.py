@@ -9,6 +9,7 @@ from src.constants.messages import (
     MESSAGE_SUCCESS_PATH_LOADED,
     MESSAGE_SUCCESS_REVERTED,
 )
+from src.models.file_organizer_model import FileOrganizerModel
 from src.services.file_service import FileService
 
 
@@ -46,7 +47,7 @@ class TestFileServiceSetPath:
         second_path: Path = tmp_path_factory.mktemp("second")
         service: FileService = FileService()
         service.set_path(str(tmp_path))
-        first_organizer = service._file_organizer
+        first_organizer: FileOrganizerModel | None = service._file_organizer
         service.set_path(str(second_path))
         assert service._file_organizer is not first_organizer
 
