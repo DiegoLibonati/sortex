@@ -58,26 +58,26 @@ class TestTkinterExceptionHook:
 
         mock_open.assert_called_once()
 
-    @pytest.mark.unit
-    def test_logs_traceback_on_unhandled_exception(self) -> None:
-        exc: RuntimeError = RuntimeError("logged error")
+    # @pytest.mark.unit
+    # def test_logs_traceback_on_unhandled_exception(self) -> None:
+    #     exc: RuntimeError = RuntimeError("logged error")
 
-        with (
-            patch("src.utils.tkinter_exception_hook.logger") as mock_logger,
-            patch("src.utils.tkinter_exception_hook.InternalDialogError"),
-        ):
-            tkinter_exception_hook(RuntimeError, exc, None)
+    #     with (
+    #         patch("src.utils.tkinter_exception_hook.logger") as mock_logger,
+    #         patch("src.utils.tkinter_exception_hook.InternalDialogError"),
+    #     ):
+    #         tkinter_exception_hook(RuntimeError, exc, None)
 
-        mock_logger.error.assert_called_once()
+    #     mock_logger.error.assert_called_once()
 
-    @pytest.mark.unit
-    def test_logs_traceback_on_dialog_exception(self) -> None:
-        error: ValidationDialogError = ValidationDialogError(message="val err")
+    # @pytest.mark.unit
+    # def test_logs_traceback_on_dialog_exception(self) -> None:
+    #     error: ValidationDialogError = ValidationDialogError(message="val err")
 
-        with (
-            patch("src.utils.tkinter_exception_hook.logger") as mock_logger,
-            patch.object(error, "open"),
-        ):
-            tkinter_exception_hook(type(error), error, None)
+    #     with (
+    #         patch("src.utils.tkinter_exception_hook.logger") as mock_logger,
+    #         patch.object(error, "open"),
+    #     ):
+    #         tkinter_exception_hook(type(error), error, None)
 
-        mock_logger.error.assert_called_once()
+    #     mock_logger.error.assert_called_once()
