@@ -1,4 +1,5 @@
-from tkinter import Frame, Tk
+from collections.abc import Callable
+from tkinter import Frame, Misc
 from typing import Any
 
 from src.ui.components.action_buttons import ActionButtons
@@ -11,11 +12,11 @@ from src.ui.styles import Styles
 class MainView(Frame):
     def __init__(
         self,
-        root: Tk,
+        root: Misc,
         styles: Styles,
-        on_search: callable,
-        on_organize: callable,
-        on_revert: callable,
+        on_search: Callable[[], None],
+        on_organize: Callable[[], None],
+        on_revert: Callable[[], None],
     ) -> None:
         super().__init__(root, bg=styles.WHITE_SMOKE_COLOR)
         self._styles = styles
