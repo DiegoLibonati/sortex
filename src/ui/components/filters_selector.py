@@ -72,7 +72,11 @@ class FiltersSelector(Frame):
         self._entry_max_size.grid(padx=0, pady=0, row=2, column=1)
 
     def _handle_filters(self) -> None:
-        state = self._styles.STATE_NORMAL if self._check_value_filters.get() else self._styles.STATE_DISABLED
+        state = (
+            self._styles.STATE_NORMAL
+            if self._check_value_filters.get()
+            else self._styles.STATE_DISABLED
+        )
         self._entry_min_size.config(state=state)
         self._entry_max_size.config(state=state)
 

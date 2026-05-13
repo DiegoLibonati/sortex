@@ -10,7 +10,21 @@ class ExtensionsSelector(Frame):
 
         self._check_value_all = BooleanVar(value=True)
         self._extensions_options: dict[str, BooleanVar] = {
-            ext: BooleanVar(value=True) for ext in ["mp4", "pdf", "exe", "png", "jpg", "jpeg", "txt", "json", "mp3", "m3u8", "zip", "gif"]
+            ext: BooleanVar(value=True)
+            for ext in [
+                "mp4",
+                "pdf",
+                "exe",
+                "png",
+                "jpg",
+                "jpeg",
+                "txt",
+                "json",
+                "mp3",
+                "m3u8",
+                "zip",
+                "gif",
+            ]
         }
 
         self._create_widgets()

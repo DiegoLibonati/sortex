@@ -30,7 +30,9 @@ class TestFileOrganizerModelInit:
         assert model.extensions_allowed == []
 
     def test_custom_extensions_allowed(self, tmp_path: Path) -> None:
-        model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path), extensions_allowed=["pdf", "txt"])
+        model: FileOrganizerModel = FileOrganizerModel(
+            path=str(tmp_path), extensions_allowed=["pdf", "txt"]
+        )
         assert model.extensions_allowed == ["pdf", "txt"]
 
     def test_filters_initially_empty(self, tmp_path: Path) -> None:
@@ -84,7 +86,9 @@ class TestFileOrganizerModelOrganizer:
     def test_with_extensions_allowed_only_moves_matching(self, tmp_path: Path) -> None:
         (tmp_path / "doc.pdf").write_text("content")
         (tmp_path / "image.png").write_text("content")
-        model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path), extensions_allowed=["pdf"])
+        model: FileOrganizerModel = FileOrganizerModel(
+            path=str(tmp_path), extensions_allowed=["pdf"]
+        )
         model.organizer()
         assert os.path.isdir(str(tmp_path / "PDF_ORGANIZER"))
         assert not os.path.isdir(str(tmp_path / "PNG_ORGANIZER"))
@@ -92,7 +96,9 @@ class TestFileOrganizerModelOrganizer:
 
     def test_no_matching_files_returns_false(self, tmp_path: Path) -> None:
         (tmp_path / "doc.pdf").write_text("content")
-        model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path), extensions_allowed=["txt"])
+        model: FileOrganizerModel = FileOrganizerModel(
+            path=str(tmp_path), extensions_allowed=["txt"]
+        )
         message, success = model.organizer()
         assert success is False
         assert message == MESSAGE_NOT_FOUND_PATH_OR_EXTENSIONS
@@ -174,7 +180,9 @@ class TestFileOrganizerModelGetFiles:
     def test_filters_by_extension(self, tmp_path: Path) -> None:
         (tmp_path / "doc.pdf").write_text("content")
         (tmp_path / "image.png").write_text("content")
-        model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path), extensions_allowed=["pdf"])
+        model: FileOrganizerModel = FileOrganizerModel(
+            path=str(tmp_path), extensions_allowed=["pdf"]
+        )
         files: list[str] = model._get_files()
         assert "doc.pdf" in files
         assert "image.png" not in files
@@ -198,7 +206,9 @@ class TestFileOrganizerModelGetFiles:
     def test_size_filter_with_extension_filter(self, tmp_path: Path) -> None:
         (tmp_path / "doc.pdf").write_bytes(b"x" * (512 * 1024))
         (tmp_path / "image.png").write_bytes(b"x" * (512 * 1024))
-        model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path), extensions_allowed=["pdf"])
+        model: FileOrganizerModel = FileOrganizerModel(
+            path=str(tmp_path), extensions_allowed=["pdf"]
+        )
         model.filters = {"min_size": 0, "max_size": 1}
         files: list[str] = model._get_files()
         assert "doc.pdf" in files
@@ -236,7 +246,9 @@ class TestFileOrganizerModelStr:
         model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path))
         assert "ORGANIZER" in str(model)
 
-    def test_print_path_does_not_raise(self, tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    def test_print_path_does_not_raise(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
         model: FileOrganizerModel = FileOrganizerModel(path=str(tmp_path))
         model.print_path()
         captured = capsys.readouterr()

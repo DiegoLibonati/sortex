@@ -18,10 +18,15 @@ class TestMessages:
         assert messages.MESSAGE_NOT_VALID_PATH == "Invalid path."
 
     def test_message_not_found_dialog_type(self) -> None:
-        assert messages.MESSAGE_NOT_FOUND_DIALOG_TYPE == "The type of dialog to display is not found."
+        assert (
+            messages.MESSAGE_NOT_FOUND_DIALOG_TYPE == "The type of dialog to display is not found."
+        )
 
     def test_message_not_found_path_or_extensions(self) -> None:
-        assert messages.MESSAGE_NOT_FOUND_PATH_OR_EXTENSIONS == "There is no path or there are no extensions."
+        assert (
+            messages.MESSAGE_NOT_FOUND_PATH_OR_EXTENSIONS
+            == "There is no path or there are no extensions."
+        )
 
     def test_message_not_found_files(self) -> None:
         assert messages.MESSAGE_NOT_FOUND_FILES == "There are no files."

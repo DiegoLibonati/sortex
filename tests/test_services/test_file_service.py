@@ -43,7 +43,9 @@ class TestFileServiceSetPath:
         service.set_path(str(tmp_path))
         assert service._file_organizer is not None
 
-    def test_second_set_path_replaces_organizer(self, tmp_path: Path, tmp_path_factory: pytest.TempPathFactory) -> None:
+    def test_second_set_path_replaces_organizer(
+        self, tmp_path: Path, tmp_path_factory: pytest.TempPathFactory
+    ) -> None:
         second_path: Path = tmp_path_factory.mktemp("second")
         service: FileService = FileService()
         service.set_path(str(tmp_path))

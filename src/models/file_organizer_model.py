@@ -43,7 +43,9 @@ class FileOrganizerModel:
 
         files_extensions = self._get_extensions(files=self._get_files())
 
-        extensions = self.extensions_allowed if self.extensions_allowed else self.all_path_extensions
+        extensions = (
+            self.extensions_allowed if self.extensions_allowed else self.all_path_extensions
+        )
 
         for extension in extensions:
             folder_name = f"{extension.upper()}_{self.folder_name}"
@@ -64,7 +66,11 @@ class FileOrganizerModel:
         return MESSAGE_SUCCESS_ORGANIZED, True
 
     def revert_organizer(self) -> tuple[str, bool]:
-        folder_names = [name for name in os.listdir(self.path) if os.path.isdir(f"{self.path}/{name}") and self.folder_name in name]
+        folder_names = [
+            name
+            for name in os.listdir(self.path)
+            if os.path.isdir(f"{self.path}/{name}") and self.folder_name in name
+        ]
 
         if not folder_names:
             return MESSAGE_NOT_FOUND_FOLDERS, False
@@ -96,7 +102,12 @@ class FileOrganizerModel:
                 return [file for file in files_in_path if os.path.isfile(f"{self.path}/{file}")]
 
             if not self.filters and self.extensions_allowed:
-                return [file for file in files_in_path if os.path.isfile(f"{self.path}/{file}") and file.rsplit(".", 1).pop() in self.extensions_allowed]
+                return [
+                    file
+                    for file in files_in_path
+                    if os.path.isfile(f"{self.path}/{file}")
+                    and file.rsplit(".", 1).pop() in self.extensions_allowed
+                ]
 
             files = []
             byte = 1024 * 1024
@@ -113,7 +124,11 @@ class FileOrganizerModel:
                 file_size = os.stat(f"{self.path}/{file}").st_size
                 file_extension = file.rsplit(".", 1).pop()
 
-                if (not self.extensions_allowed or file_extension in self.extensions_allowed) and file_size >= filter_min_size and file_size <= filter_max_size:
+                if (
+                    (not self.extensions_allowed or file_extension in self.extensions_allowed)
+                    and file_size >= filter_min_size
+                    and file_size <= filter_max_size
+                ):
                     files.append(file)
 
             return files

@@ -24,7 +24,20 @@ class TestExtensionsSelector:
 
     def test_known_extensions_present(self, root: tk.Tk) -> None:
         widget: ExtensionsSelector = ExtensionsSelector(parent=root, styles=Styles())
-        expected: list[str] = ["mp4", "pdf", "exe", "png", "jpg", "jpeg", "txt", "json", "mp3", "m3u8", "zip", "gif"]
+        expected: list[str] = [
+            "mp4",
+            "pdf",
+            "exe",
+            "png",
+            "jpg",
+            "jpeg",
+            "txt",
+            "json",
+            "mp3",
+            "m3u8",
+            "zip",
+            "gif",
+        ]
         for ext in expected:
             assert ext in widget._extensions_options
 

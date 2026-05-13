@@ -1,7 +1,11 @@
 import os
 from typing import Any
 
-from src.constants.messages import MESSAGE_NOT_FOUND_PATH, MESSAGE_NOT_VALID_PATH, MESSAGE_SUCCESS_PATH_LOADED
+from src.constants.messages import (
+    MESSAGE_NOT_FOUND_PATH,
+    MESSAGE_NOT_VALID_PATH,
+    MESSAGE_SUCCESS_PATH_LOADED,
+)
 from src.models.file_organizer_model import FileOrganizerModel
 
 
