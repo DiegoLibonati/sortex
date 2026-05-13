@@ -53,4 +53,4 @@ class TestStyles:
         assert Styles.ANCHOR_W == W
 
     def test_cursor_hand2(self) -> None:
-        assert Styles.CURSOR_HAND2 == "HAND2"
+        assert Styles.CURSOR_HAND2 == "hand2"

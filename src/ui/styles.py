@@ -31,6 +31,6 @@ class Styles:
     STATE_NORMAL = NORMAL
     STATE_DISABLED = DISABLED
 
-    CURSOR_HAND2 = "HAND2"
+    CURSOR_HAND2 = "hand2"
 
     ANCHOR_W = W
