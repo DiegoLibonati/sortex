@@ -113,11 +113,8 @@ You can check your dependencies for known vulnerabilities using **pip-audit**.
 
 Once the code is tested and the dependencies are clean, you can ship Sortex as a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
 
-> **Security notice:** `app.spec` bundles the `.env` file into the executable. Never put real
-> production secrets (API keys, passwords, tokens) inside the repo-level `.env` before building.
-> Instead, create a dedicated `.env.prod` file with production values, copy it to `.env` just
-> before running PyInstaller, and delete it afterwards. The development `.env` (`ENVIRONMENT=development`)
-> is safe to use for local builds only.
+> **Security notice:** `app.spec` bundles the `.env` file into the executable. Before building for
+> production, set your production values directly in `.env`. Never commit secrets to the repository.
 
 ### Windows
 

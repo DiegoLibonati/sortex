@@ -1,7 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 # NOTE: The .env bundled here must NOT contain real production secrets.
-# Create a separate file (e.g. .env.prod) and copy it to .env before running
-# PyInstaller, or parameterise this path via an environment variable.
+# Set production values directly in .env before running PyInstaller.
 
 a = Analysis(
     ['app.py'],
