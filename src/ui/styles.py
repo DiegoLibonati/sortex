@@ -1,4 +1,4 @@
-from tkinter import CENTER, DISABLED, FLAT, NORMAL, W
+from typing import Final, Literal
 
 
 class Styles:
@@ -22,15 +22,15 @@ class Styles:
     FONT_ARIAL_BOLD_15 = f"{FONT_ARIAL} 15 bold"
     FONT_ARIAL_BOLD_20 = f"{FONT_ARIAL} 20 bold"
 
-    CENTER = CENTER
+    CENTER: Final[Literal["center"]] = "center"
 
-    ANCHOR_CENTER = CENTER
+    ANCHOR_CENTER: Final[Literal["center"]] = "center"
 
-    RELIEF_FLAT = FLAT
+    RELIEF_FLAT: Final[Literal["flat"]] = "flat"
 
-    STATE_NORMAL = NORMAL
-    STATE_DISABLED = DISABLED
+    STATE_NORMAL: Final[Literal["normal"]] = "normal"
+    STATE_DISABLED: Final[Literal["disabled"]] = "disabled"
 
     CURSOR_HAND2 = "hand2"
 
-    ANCHOR_W = W
+    ANCHOR_W: Final[Literal["w"]] = "w"

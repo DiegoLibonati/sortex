@@ -10,7 +10,7 @@ logger = setup_logger("tkinter-app - tkinter_exception_hook")
 def tkinter_exception_hook(
     _exc_type: type[BaseException],
     exc_value: BaseException,
-    _exc_tb: types.TracebackType,
+    _exc_tb: types.TracebackType | None,
 ) -> None:
     # error_detail = "".join(traceback.format_exception(_exc_type, exc_value, _exc_tb))
     # logger.error("Unhandled exception:\n%s", error_detail)

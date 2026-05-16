@@ -1,10 +1,11 @@
+from collections.abc import Callable
 from tkinter import Button, Entry, Frame, Misc, StringVar
 
 from src.ui.styles import Styles
 
 
 class PathSelector(Frame):
-    def __init__(self, parent: Misc, styles: Styles, on_search: callable) -> None:
+    def __init__(self, parent: Misc, styles: Styles, on_search: Callable[[], None]) -> None:
         super().__init__(parent, bg=styles.WHITE_SMOKE_COLOR)
         self._styles = styles
         self._on_search = on_search

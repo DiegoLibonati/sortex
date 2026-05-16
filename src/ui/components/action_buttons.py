@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from tkinter import Button, Frame, Misc
 
 from src.ui.styles import Styles
@@ -5,7 +6,11 @@ from src.ui.styles import Styles
 
 class ActionButtons(Frame):
     def __init__(
-        self, parent: Misc, styles: Styles, on_organize: callable, on_revert: callable
+        self,
+        parent: Misc,
+        styles: Styles,
+        on_organize: Callable[[], None],
+        on_revert: Callable[[], None],
     ) -> None:
         super().__init__(parent, bg=styles.WHITE_SMOKE_COLOR)
         self._styles = styles
