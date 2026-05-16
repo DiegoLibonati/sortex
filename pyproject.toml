@@ -1,6 +1,6 @@
 [project]
 name = "sortex"
-version = "1.0.0"
+version = "1.1.0"
 description = "Sortex is a desktop application built with Python and Tkinter that automatically organizes the files inside any directory by grouping them into extension-named subfolders."
 requires-python = ">=3.11"
 dependencies = [
