@@ -42,6 +42,7 @@ pre-commit==4.3.0
 pip-audit==2.7.3
 ruff==0.11.12
 mypy==1.13.0
+python-semantic-release==9.21.0
 ```
 
 #### Test (`[project.optional-dependencies]` test)
@@ -174,9 +175,9 @@ The repository ships with a **GitHub Actions** pipeline defined in [`.github/wor
 
 ### Release jobs (only on push to `main`)
 
-4. **`prepare-release`** — inspects the commits since the latest tag, decides the next SemVer version using [Conventional Commits](#conventional-commits-required-for-releases), generates the changelog section, updates `CHANGELOG.md` and `pyproject.toml`, then commits, tags and pushes back to `main`. Skipped automatically when the head commit is the bot's own `chore(release): vX.Y.Z` commit, to avoid loops.
+4. **`prepare-release`** — runs [`python-semantic-release`](https://python-semantic-release.readthedocs.io/) (configured under `[tool.semantic_release]` in `pyproject.toml`). It inspects the commits since the latest tag, decides the next SemVer version using [Conventional Commits](#conventional-commits-required-for-releases), updates `CHANGELOG.md` and the `version` field in `pyproject.toml`, then commits, tags and pushes back to `main`. Skipped automatically when the head commit is the bot's own `chore(release): vX.Y.Z [skip release]` commit, to avoid loops.
 5. **`build-windows-exe`** — checks out the freshly created tag on a `windows-latest` runner, runs `pyinstaller app.spec`, and renames the artifact to `sortex-vX.Y.Z-windows.exe`.
-6. **`publish-release`** — creates the GitHub Release for the new tag, attaches the Windows `.exe`, and uses the generated changelog section as the release notes.
+6. **`publish-release`** — uses `python-semantic-release/publish-action` to create the GitHub Release for the new tag and attach the Windows `.exe` as a release asset.
 
 ### Conventional Commits (required for releases)
 
@@ -186,10 +187,11 @@ Commits merged into `main` must follow [Conventional Commits](https://www.conven
 |---|---|---|
 | `feat:` / `feat(scope):` | **MINOR** | `feat(ui): add dark mode toggle` |
 | `fix:` / `fix(scope):` | **PATCH** | `fix: prevent crash on empty path` |
-| `perf:`, `refactor:`, `docs:`, `build:`, `ci:`, `chore:`, `style:`, `test:` | **PATCH** | `refactor: extract path validation helper` |
+| `perf:` / `perf(scope):` | **PATCH** | `perf: speed up extension scan` |
+| `refactor:`, `docs:`, `build:`, `ci:`, `chore:`, `style:`, `test:` | **No release** | `refactor: extract path validation helper` |
 | `feat!:` / `fix!:` or `BREAKING CHANGE:` in the body | **MAJOR** | `feat!: rewrite organizer API` |
 
-When a push contains multiple commits, the highest applicable bump wins (a single `feat:` among many `fix:` triggers a MINOR bump). If you squash-merge PRs, configure the repo to use the PR title as the squash commit message and write the **PR title** following the convention.
+When a push contains multiple commits, the highest applicable bump wins (a single `feat:` among many `fix:` triggers a MINOR bump). If none of the commits in a push contain a release-triggering prefix, `python-semantic-release` exits without creating a new version. If you squash-merge PRs, configure the repo to use the PR title as the squash commit message and write the **PR title** following the convention.
 
 ### Skipping a release
 
